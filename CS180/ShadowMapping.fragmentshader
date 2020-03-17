@@ -6,9 +6,9 @@ in vec3 Position_worldspace;
 in vec3 Normal_cameraspace;
 in vec3 EyeDirection_cameraspace;
 in vec3 LightDirection_cameraspace;
-//in vec3 LightDirection_cameraspace_2;
+in vec3 LightDirection_cameraspace_2;
 in vec4 ShadowCoord;
-//in vec4 ShadowCoord_2;
+in vec4 ShadowCoord_2;
 //Ouput data
 layout(location = 0) out vec3 color;
 
@@ -16,9 +16,9 @@ layout(location = 0) out vec3 color;
 uniform sampler2D myTextureSampler;
 uniform mat4 MV;
 uniform vec3 LightPosition_worldspace;
-//uniform vec3 LightInvDirection_worldspace_2;
+uniform vec3 LightInvDirection_worldspace_2;
 uniform sampler2DShadow shadowMap;
-//uniform sampler2DShadow shadowMap_2;
+uniform sampler2DShadow shadowMap_2;
 
 vec2 poissonDisk[16] = vec2[]( 
    vec2( -0.94201624, -0.39906216 ), 
@@ -119,7 +119,7 @@ void main(){
 		// being fully in the shadow will eat up 4*0.2 = 0.8
 		// 0.2 potentially remain, which is quite dark.
 		visibility -= 0.2*(1.0-texture( shadowMap, vec3(ShadowCoord.xy + poissonDisk[index]/700.0,  (ShadowCoord.z-bias)/ShadowCoord.w) ));
-		//visibility -= 0.2*(1.0-texture( shadowMap_2, vec3(ShadowCoord_2.xy + poissonDisk[index]/700.0,  (ShadowCoord_2.z-bias)/ShadowCoord_2.w) ));
+		visibility -= 0.2*(1.0-texture( shadowMap_2, vec3(ShadowCoord_2.xy + poissonDisk[index]/700.0,  (ShadowCoord_2.z-bias)/ShadowCoord_2.w) ));
 	}
 
 	// For spot lights, use either one of these lines instead.

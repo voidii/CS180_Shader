@@ -236,8 +236,8 @@ int main(void)
 
 
 	// Create and compile our GLSL program from the shaders
-	GLuint programID = LoadShaders("ShadowMapping_SimpleVersion.vertexshader", "ShadowMapping_SimpleVersion.fragmentshader");
-	GLuint programID_2 = LoadShaders("ShadowMapping_SimpleVersion.vertexshader", "ShadowMapping_SimpleVersion.fragmentshader");
+	GLuint programID = LoadShaders("ShadowMapping.vertexshader", "ShadowMapping.fragmentshader");
+	//GLuint programID_2 = LoadShaders("ShadowMapping_SimpleVersion.vertexshader", "ShadowMapping_SimpleVersion.fragmentshader");
 
 	// Get a handle for our "myTextureSampler" uniform
 	GLuint TextureID = glGetUniformLocation(programID, "myTextureSampler");
@@ -247,13 +247,13 @@ int main(void)
 	GLuint MatrixID = glGetUniformLocation(programID, "MVP");
 	GLuint ViewMatrixID = glGetUniformLocation(programID, "V");
 	GLuint ModelMatrixID = glGetUniformLocation(programID, "M");
-	GLuint MatrixID_2 = glGetUniformLocation(programID_2, "MVP");
-	GLuint ViewMatrixID_2 = glGetUniformLocation(programID_2, "V");
-	GLuint ModelMatrixID_2 = glGetUniformLocation(programID_2, "M");
+	GLuint MatrixID_2 = glGetUniformLocation(programID, "MVP");
+	GLuint ViewMatrixID_2 = glGetUniformLocation(programID, "V");
+	GLuint ModelMatrixID_2 = glGetUniformLocation(programID, "M");
 	GLuint DepthBiasID = glGetUniformLocation(programID, "DepthBiasMVP");
-	GLuint DepthBiasID_2 = glGetUniformLocation(programID_2, "DepthBiasMVP_2");
+	GLuint DepthBiasID_2 = glGetUniformLocation(programID, "DepthBiasMVP_2");
 	GLuint ShadowMapID = glGetUniformLocation(programID, "shadowMap");
-	GLuint ShadowMapID_2 = glGetUniformLocation(programID_2, "shadowMap_2");
+	GLuint ShadowMapID_2 = glGetUniformLocation(programID, "shadowMap_2");
 
 	// Get a handle for our "LightPosition" uniform
 	GLuint lightInvDirID = glGetUniformLocation(programID, "LightInvDirection_worldspace");
@@ -337,17 +337,17 @@ int main(void)
 
 		// Clear the screen
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+		
 
 		glUseProgram(depthProgramID_2);
 		glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, depthTexture_2, 0);
 		glClear(GL_DEPTH_BUFFER_BIT);
 
-		glm::vec3 lightInvDir_2 = glm::vec3(1, 2, 3);
+		glm::vec3 lightInvDir_2 = glm::vec3(1, 5, 3);
 
 		// Compute the MVP matrix from the light's point of view
 		glm::mat4 depthProjectionMatrix_2 = glm::ortho<float>(-10, 10, -10, 10, -10, 20);
-		glm::mat4 depthViewMatrix_2 = glm::lookAt(lightInvDir, glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
+		glm::mat4 depthViewMatrix_2 = glm::lookAt(lightInvDir_2, glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
 		// or, for spot light :
 		//glm::vec3 lightPos(5, 20, 20);
 		//glm::mat4 depthProjectionMatrix = glm::perspective<float>(45.0f, 1.0f, 2.0f, 50.0f);
@@ -395,7 +395,7 @@ int main(void)
 		glCullFace(GL_BACK); // Cull back-facing triangles -> draw only front-facing triangles
 
 		// Clear the screen
-		//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
 
 		// Use our shader
@@ -417,7 +417,7 @@ int main(void)
 		);
 
 		glm::mat4 depthBiasMVP = biasMatrix * depthMVP;
-		//glm::mat4 depthBiasMVP_2 = biasMatrix * depthMVP_2;
+		glm::mat4 depthBiasMVP_2 = biasMatrix * depthMVP_2;
 
 		// Send our transformation to the currently bound shader, 
 		// in the "MVP" uniform
@@ -425,10 +425,10 @@ int main(void)
 		glUniformMatrix4fv(ModelMatrixID, 1, GL_FALSE, &ModelMatrix[0][0]);
 		glUniformMatrix4fv(ViewMatrixID, 1, GL_FALSE, &ViewMatrix[0][0]);
 		glUniformMatrix4fv(DepthBiasID, 1, GL_FALSE, &depthBiasMVP[0][0]);
-		//glUniformMatrix4fv(DepthBiasID_2, 1, GL_FALSE, &depthBiasMVP_2[0][0]);
+		glUniformMatrix4fv(DepthBiasID_2, 1, GL_FALSE, &depthBiasMVP_2[0][0]);
 
 		glUniform3f(lightInvDirID, lightInvDir.x, lightInvDir.y, lightInvDir.z);
-		//glUniform3f(lightInvDirID_2, lightInvDir_2.x, lightInvDir_2.y, lightInvDir_2.z);
+		glUniform3f(lightInvDirID_2, lightInvDir_2.x, lightInvDir_2.y, lightInvDir_2.z);
 
 		// Bind our texture in Texture Unit 0
 		glActiveTexture(GL_TEXTURE0);
@@ -438,7 +438,7 @@ int main(void)
 
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, depthTexture);
-		glUniform1i(ShadowMapID, 1);
+		glUniform1i(ShadowMapID_2, 1);
 
 
 		// 1rst attribute buffer : vertices
@@ -492,7 +492,7 @@ int main(void)
 		glDisableVertexAttribArray(1);
 		glDisableVertexAttribArray(2);
 
-		glActiveTexture(GL_TEXTURE2);
+		/*glActiveTexture(GL_TEXTURE2);
 		glBindTexture(GL_TEXTURE_2D, depthTexture_2);
 		glUniform1i(ShadowMapID_2, 1);
 
@@ -544,7 +544,7 @@ int main(void)
 
 		glDisableVertexAttribArray(0);
 		glDisableVertexAttribArray(1);
-		glDisableVertexAttribArray(2);
+		glDisableVertexAttribArray(2);*/
 
 
 		// Optionally render the shadowmap (for debug only)
