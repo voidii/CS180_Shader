@@ -16,7 +16,7 @@ layout(location = 0) out vec3 color;
 uniform sampler2D myTextureSampler;
 uniform mat4 MV;
 uniform vec3 LightPosition_worldspace;
-uniform vec3 LightInvDirection_worldspace_2;
+uniform vec3 LightPosition_worldspace_2;
 uniform sampler2DShadow shadowMap;
 uniform sampler2DShadow shadowMap_2;
 
@@ -50,7 +50,7 @@ void main(){
 
 	// Light emission properties
 	vec3 LightColor = vec3(1,1,1);
-	float LightPower = 0.5f;
+	float LightPower = 1;
 	
 	// Material properties
 	vec3 MaterialDiffuseColor = texture( myTextureSampler, UV ).rgb;
@@ -81,7 +81,7 @@ void main(){
 	//  - Looking elsewhere -> < 1
 	float cosAlpha = clamp( dot( E,R ), 0,1 );
 	
-	float visibility=1.0;
+	float visibility=1;
 
 	// Fixed bias, or...
 	float bias = 0.005;
@@ -90,17 +90,28 @@ void main(){
 	//float bias = 0.005*tan(acos(cosTheta));
 	//bias = clamp(bias, 0,0.01);
 
-	/*if ( (texture( shadowMap, vec3(ShadowCoord.xy, 0) )  <  ShadowCoord.z-bias) && (texture( shadowMap_2, vec3(ShadowCoord_2.xy, 0))  <  ShadowCoord_2.z-bias))
+
+	//if ( (texture( shadowMap, ShadowCoord.xy ).z  <  ShadowCoord.z)) { //&& (texture( shadowMap_2, ShadowCoord_2.xy ).z  <  ShadowCoord_2.z)){
+	//	visibility = 0.25;
+	//}
+	/*if ( (texture( shadowMap, ShadowCoord.xy ).z  <  ShadowCoord.z) && (texture( shadowMap_2, ShadowCoord_2.xy ).z  >  ShadowCoord_2.z)){
+		visibility = 0.8;
+	}
+	if ( (texture( shadowMap, ShadowCoord.xy ).z  >  ShadowCoord.z) && (texture( shadowMap_2, ShadowCoord_2.xy ).z  <  ShadowCoord_2.z)){
+		visibility = 0.8;
+	}*/
+
+	/*if ( (texture( shadowMap, ShadowCoord.xyz, bias)  >  ShadowCoord.z) && (texture( shadowMap_2, ShadowCoord_2.xyz, bias)  <  ShadowCoord_2.z) )
 	{
 		visibility = 0.2;
 	}
-	if ( (texture( shadowMap, vec3(ShadowCoord.xy, 0) )  <  ShadowCoord.z-bias) && (texture( shadowMap_2, vec3(ShadowCoord_2.xy, 0) )  >  ShadowCoord_2.z-bias))
+	if ( (texture( shadowMap, ShadowCoord.xyz, bias)  <  ShadowCoord.z) && (texture( shadowMap_2, ShadowCoord_2.xyz, bias)  >  ShadowCoord_2.z) )
 	{
 		visibility = 0.5;
 	}
-	if ( (texture( shadowMap, vec3(ShadowCoord.xy, 0) )  >  ShadowCoord.z-bias) && (texture( shadowMap_2, vec3(ShadowCoord_2.xy, 0) )  <  ShadowCoord_2.z-bias))
+	if ( (texture( shadowMap, ShadowCoord.xyz, bias)  >  ShadowCoord.z) && (texture( shadowMap_2, ShadowCoord_2.xyz, bias)  >  ShadowCoord_2.z) )
 	{
-		visibility = 0.5;
+		visibility = 0.8;
 	}*/
 
 	// Sample the shadow map 4 times
