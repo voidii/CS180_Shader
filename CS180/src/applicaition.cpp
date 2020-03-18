@@ -81,7 +81,7 @@ int main(void)
 	std::vector<glm::vec3> vertices;
 	std::vector<glm::vec2> uvs;
 	std::vector<glm::vec3> normals;
-	bool res = loadOBJ("room_thickwalls.obj", vertices, uvs, normals);
+	bool res = loadOBJ("10.obj", vertices, uvs, normals);
 
 	std::vector<unsigned short> indices;
 	std::vector<glm::vec3> indexed_vertices;
@@ -177,7 +177,7 @@ int main(void)
 	do {
 
 		glm::vec3 lightInvDir = glm::vec3(0.5f, 2, 2);
-		glm::vec3 lightInvDir_2 = glm::vec3(-2, 2, 2);
+		glm::vec3 lightInvDir_2 = glm::vec3(0.5f, 2, -2);
 		
 		glBindFramebuffer(GL_FRAMEBUFFER, FramebufferName);
 		glDrawBuffer(GL_NONE);
